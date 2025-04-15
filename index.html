@@ -29,221 +29,252 @@
       }
     }
   </script>
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen flex items-center justify-center transition-colors duration-500">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
 
-  <!-- Toggle Dark Mode Button -->
   <div class="absolute top-4 right-4">
     <button onclick="toggleDarkMode()" class="bg-yellow-400 dark:bg-yellow-600 text-black dark:text-white px-4 py-2 rounded-xl shadow hover:shadow-lg transition">
       🌗 Toggle Mode
     </button>
   </div>
 
-  <!-- Generator Card -->
-  <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-xl animate-fadeIn relative">
-    <h2 class="text-4xl font-extrabold text-center text-indigo-800 dark:text-indigo-200 mb-6 animate-slideUp drop-shadow-lg">
-      Gmail Dot Generator
-    </h2>
+  <div class="w-full max-w-xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 animate-fadeIn">
+    <h2 class="text-3xl font-bold text-center text-indigo-700 dark:text-indigo-300 mb-4">Gmail Dot Generator</h2>
 
-    <!-- Alert -->
-    <div id="customAlert" class="hidden absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-xl shadow-xl animate-slideUp z-50">
+    <div id="customAlert" class="hidden text-sm text-white text-center bg-green-600 px-4 py-2 rounded-xl shadow mb-4">
       <span id="alertMessage">Generate selesai!</span>
     </div>
 
-    <!-- Input -->
-    <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-200">Masukkan Gmail Utama:</label>
-    <input type="email" id="email" placeholder="contoh@gmail.com" class="mt-1 block w-full rounded-xl border border-gray-300 shadow-md focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300" />
+    <label for="email" class="block text-sm font-medium mb-1">Masukkan Gmail Utama:</label>
+    <input id="email" type="email" placeholder="contoh@gmail.com" class="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400" />
 
-    <!-- Options -->
-    <div class="mt-4 space-y-2">
-      <div class="flex items-center">
-        <input id="dotVariation" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" checked />
-        <label for="dotVariation" class="ml-2 block text-sm text-gray-800 dark:text-gray-100">Variasi dengan titik</label>
+    <div class="space-y-2 mb-6">
+      <label class="flex items-center">
+        <input id="dotVariation" type="checkbox" class="mr-2" checked /> Variasi dengan titik
+      </label>
+      <label class="flex items-center">
+        <input id="aliasVariation" type="checkbox" class="mr-2" checked /> Variasi dengan alias (+)
+      </label>
+      <label class="flex items-center">
+        <input id="googlemailVariation" type="checkbox" class="mr-2" checked /> Gunakan domain googlemail
+      </label>
+    </div>
+
+    <div class="flex gap-2 mb-4">
+      <button id="generateBtn" onclick="toggleGenerate()" class="flex-1 bg-indigo-600 text-white font-semibold py-2 rounded-xl hover:bg-indigo-700">Generate</button>
+      <button onclick="resetForm()" class="flex-1 bg-gray-300 text-gray-800 font-semibold py-2 rounded-xl hover:bg-gray-400">Reset</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+      <button onclick="copyToClipboard()" class="bg-pink-500 text-white py-2 rounded-xl hover:bg-pink-600">Copy</button>
+      <button onclick="exportCSV()" class="bg-green-600 text-white py-2 rounded-xl hover:bg-green-700">Save CSV</button>
+      <button onclick="exportTXT()" class="bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700">Save TXT</button>
+    </div>
+
+    <div id="loading" class="hidden mb-4 text-center">
+      <p class="text-sm mb-1">⏳ Sedang membuat email...</p>
+      <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden mb-1">
+        <div id="progressBar" class="bg-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
       </div>
-      <div class="flex items-center">
-        <input id="aliasVariation" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" checked />
-        <label for="aliasVariation" class="ml-2 block text-sm text-gray-800 dark:text-gray-100">Variasi dengan alias (+)</label>
+      <p class="text-xs">Progress: <span id="liveCount">0</span> kombinasi</p>
+    </div>
+
+    <div class="flex items-center justify-center gap-6 text-sm text-gray-600 dark:text-gray-300 mb-2">
+      <div class="flex items-center gap-1">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+          <path d="M432.469,0.01H79.531C35.61,0.01,0,35.62,0,79.541v0.232l219.118,199.838c10.505,9.572,23.592,14.271,36.872,14.29 c13.301-0.02,26.368-4.718,36.873-14.29L512,79.773v-0.232C512,35.62,476.389,0.01,432.469,0.01z"/>
+          <path d="M255.99,353.55c-27.532,0.019-55.279-10-77.064-29.863L0,160.508v271.951c0,43.92,35.61,79.531,79.531,79.531h352.938c43.92,0,79.531-35.611,79.531-79.531V160.508L333.056,323.687C311.289,343.55,283.543,353.568,255.99,353.55z"/>
+        </svg>     
+        <span id="count">0</span>
       </div>
-      <div class="flex items-center">
-        <input id="googlemailVariation" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" checked />
-        <label for="googlemailVariation" class="ml-2 block text-sm text-gray-800 dark:text-gray-100">Gunakan domain googlemail</label>
+      <div class="flex items-center gap-1">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" fill="currentColor">
+          <path d="M10.961,9.843l2.439,1.408c0.238,0.138,0.315,0.45,0.181,0.682c-0.138,0.239-0.436,0.326-0.681,0.185L10.42,10.685 C10.166,10.883,9.847,11,9.5,11c-0.828,0-1.5-0.672-1.5-1.5c0-0.653,0.417-1.209,1-1.415V3.503C9,3.225,9.232,3,9.5,3 S10,3.233,10,3.503v4.582c0.583,0.206,1,0.762,1,1.415C11,9.618,10.986,9.733,10.961,9.843z M9.5,19c5.247,0,9.5-4.253,9.5-9.5 S14.747,0,9.5,0S0,4.253,0,9.5S4.253,19,9.5,19z"/>
+        </svg>
+        
+        <span id="elapsed">0</span>s
       </div>
     </div>
 
-    <!-- Primary Buttons -->
-    <div class="flex justify-center gap-4 mt-12">
-        <button onclick="generateEmails()" class="w-8/12 bg-indigo-600 text-white text-lg font-bold py-3 px-6 rounded-2xl hover:bg-indigo-700 transition duration-300 shadow-xl">
-        Generate Email
-        </button>
-        <button onclick="resetForm()" class="w-4/12 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-xl hover:bg-gray-400 transition">
-        Reset
-        </button>
-    </div>
-    
-    <!-- Other Buttons -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
-        <button onclick="copyToClipboard()" class="bg-pink-500 text-white font-semibold py-2 px-4 rounded-xl hover:bg-pink-600 transition">Copy</button>
-        <button onclick="exportCSV()" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-xl hover:bg-green-700 transition">Save CSV</button>
-        <button onclick="exportTXT()" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl hover:bg-blue-700 transition">Save TXT</button>
-    </div>
+    <textarea id="result" readonly placeholder="Hasil akan muncul di sini..." class="w-full h-48 p-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-700"></textarea>
 
-    <!-- Result -->
-    <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">Jumlah email yang dibuat: <span id="count">0</span></p>
-    <textarea id="result" readonly placeholder="Hasil akan muncul di sini..." class="mt-4 w-full h-64 p-4 rounded-xl border border-gray-300 shadow-inner focus:outline-none text-sm bg-white/60 dark:bg-gray-700 dark:text-white"></textarea>
+    <p class="text-center text-xs mt-4 text-gray-500">Made with ❤️ for BombangBombing Group<br>
+      2025 &copy; <a href="https://www.instagram.com/kangadit.xyz/">kangadit.xyz</a></p>
 
-    <!-- Footer Note -->
-    <p class="mt-6 text-center text-sm text-gray-700 dark:text-gray-300 animate-fadeIn" style="text-align:center;">
-      Made with ❤️ for BombangBombing Group<br>2025 &copy; <a href="https://www.instagram.com/kangadit.xyz/">kangadit.xyz</a>
-    </p>
-
-    <!-- Histats.com (Centered Counter) -->
-    <div class="mt-2 flex justify-center items-center">
-      <div id="histats_counter"></div>
-    </div>
-    <script type="text/javascript">
-      var _Hasync = _Hasync || [];
-      _Hasync.push(['Histats.start', '1,4943847,4,603,110,40,00010000']);
-      _Hasync.push(['Histats.fasi', '1']);
-      _Hasync.push(['Histats.track_hits', '']);
-      (function () {
+      <div class="mt-2 flex justify-center items-center">
+        <div id="histats_counter"></div>
+      </div>
+      <script type="text/javascript">var _Hasync= _Hasync|| [];
+        _Hasync.push(['Histats.start', '1,4943847,4,603,110,40,00010001']);
+        _Hasync.push(['Histats.fasi', '1']);
+        _Hasync.push(['Histats.track_hits', '']);
+        (function() {
         var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
         hs.src = ('//s10.histats.com/js15_as.js');
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-      })();
-    </script>
-    <noscript>
-      <div class="flex justify-center mt-2">
-        <a href="/" target="_blank">
-          <img src="//sstatic1.histats.com/0.gif?4943847&101" alt="Histats" border="0">
-        </a>
-      </div>
-    </noscript>
+        })();</script>
+        <noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4943847&101" alt="" border="0"></a></noscript>
+      
   </div>
 
-  <!-- Scripts -->
   <script>
-    function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-    }
+    let generating = false;
+    let stopSignal = false;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedEmails = localStorage.getItem('gmail_generated_results');
-      const savedCount = localStorage.getItem('gmail_generated_count');
-      const savedEmail = localStorage.getItem('gmail_main_email');
+    window.addEventListener('DOMContentLoaded', () => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
 
-      if (savedEmails) {
-        document.getElementById('result').value = savedEmails;
-        document.getElementById('count').innerText = savedCount || '0';
-      }
-      if (savedEmail) {
-        document.getElementById('email').value = savedEmail;
-      }
+      const email = localStorage.getItem('gmail_email') || '';
+      const options = JSON.parse(localStorage.getItem('gmail_options') || '{}');
+      const result = localStorage.getItem('gmail_result') || '';
+      const count = localStorage.getItem('gmail_count') || '0';
+      const elapsed = localStorage.getItem('gmail_elapsed') || '0';
+
+      document.getElementById('email').value = email;
+      document.getElementById('dotVariation').checked = options.dot ?? true;
+      document.getElementById('aliasVariation').checked = options.alias ?? true;
+      document.getElementById('googlemailVariation').checked = options.googlemail ?? true;
+      document.getElementById('result').value = result;
+      document.getElementById('count').textContent = count;
+      document.getElementById('elapsed').textContent = elapsed;
     });
 
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
     function showAlert(message) {
-      const alertBox = document.getElementById('customAlert');
-      const alertMessage = document.getElementById('alertMessage');
-      alertMessage.textContent = message;
-      alertBox.classList.remove('hidden');
-      setTimeout(() => alertBox.classList.add('hidden'), 3000);
+      const alert = document.getElementById('customAlert');
+      const text = document.getElementById('alertMessage');
+      text.textContent = message;
+      alert.classList.remove('hidden');
+      setTimeout(() => alert.classList.add('hidden'), 3000);
+    }
+
+    function toggleGenerate() {
+      if (!generating) {
+        generateEmails();
+      } else {
+        stopSignal = true;
+      }
     }
 
     function generateEmails() {
-      const emailInput = document.getElementById('email').value.trim();
-      const dotEnabled = document.getElementById('dotVariation').checked;
-      const aliasEnabled = document.getElementById('aliasVariation').checked;
-      const googlemailEnabled = document.getElementById('googlemailVariation').checked;
+      const email = document.getElementById('email').value.trim();
+      const dot = document.getElementById('dotVariation').checked;
+      const alias = document.getElementById('aliasVariation').checked;
+      const googlemail = document.getElementById('googlemailVariation').checked;
+      const [username, domain] = email.split('@');
+      if (!email || domain.toLowerCase() !== 'gmail.com') return showAlert('Email tidak valid!');
 
-      const [username, domain] = emailInput.split('@');
-      if (!emailInput || domain.toLowerCase() !== 'gmail.com') {
-        showAlert('Email tidak valid!');
-        return;
-      }
+      const loading = document.getElementById('loading');
+      const progress = document.getElementById('progressBar');
+      const live = document.getElementById('liveCount');
+      const result = document.getElementById('result');
+      const count = document.getElementById('count');
+      const elapsed = document.getElementById('elapsed');
+      const generateBtn = document.getElementById('generateBtn');
 
-      const results = new Set();
-      results.add(username + '@gmail.com');
+      generating = true;
+      stopSignal = false;
+      generateBtn.textContent = 'Stop';
+      loading.classList.remove('hidden');
+      result.value = '';
 
-      if (dotEnabled) {
-        for (let i = 0; i < (1 << (username.length - 1)); i++) {
-          let newEmail = '';
+      const start = performance.now();
+      const emails = new Set();
+      emails.add(`${username}@gmail.com`);
+      live.textContent = emails.size;
+
+      const max = 1 << (username.length - 1);
+      let i = 0, step = 1024;
+
+      function batch() {
+        if (stopSignal) {
+          generating = false;
+          generateBtn.textContent = 'Generate';
+          loading.classList.add('hidden');
+          showAlert('Dihentikan oleh pengguna.');
+          return;
+        }
+
+        const end = Math.min(i + step, max);
+        for (; i < end; i++) {
+          let combo = '';
           for (let j = 0; j < username.length; j++) {
-            newEmail += username[j];
-            if (j < username.length - 1 && (i & (1 << j))) {
-              newEmail += '.';
-            }
+            combo += username[j];
+            if (j < username.length - 1 && (i & (1 << j))) combo += '.';
           }
-          results.add(newEmail + '@gmail.com');
+          emails.add(`${combo}@gmail.com`);
+        }
+        live.textContent = emails.size;
+        progress.style.width = `${(i / max) * 100}%`;
+
+        if (i < max) {
+          setTimeout(batch, 0);
+        } else {
+          if (alias) for (let a = 1; a <= 10; a++) emails.add(`${username}+d${a}@gmail.com`);
+          if (googlemail) Array.from(emails).forEach(e => emails.add(e.replace('@gmail.com', '@googlemail.com')));
+
+          const final = Array.from(emails);
+          result.value = final.join('\n');
+          count.textContent = final.length;
+          elapsed.textContent = ((performance.now() - start) / 1000).toFixed(2);
+          loading.classList.add('hidden');
+          generateBtn.textContent = 'Generate';
+          generating = false;
+
+          // Simpan ke localStorage
+          localStorage.setItem('gmail_email', email);
+          localStorage.setItem('gmail_options', JSON.stringify({ dot, alias, googlemail }));
+          localStorage.setItem('gmail_result', final.join('\n'));
+          localStorage.setItem('gmail_count', final.length);
+          localStorage.setItem('gmail_elapsed', elapsed.textContent);
+
+          showAlert(`Generate selesai! (${final.length} email)`);
         }
       }
-
-      if (aliasEnabled) {
-        const aliasCount = 10;
-        for (let i = 1; i <= aliasCount; i++) {
-          results.add(`${username}+d${i}@gmail.com`);
-        }
-      }
-
-      if (googlemailEnabled) {
-        Array.from(results).forEach(email => {
-          const localPart = email.split('@')[0];
-          results.add(localPart + '@googlemail.com');
-        });
-      }
-
-      const finalResults = Array.from(results);
-      document.getElementById('result').value = finalResults.join('\n');
-      document.getElementById('count').innerText = finalResults.length;
-
-      localStorage.setItem('gmail_generated_results', finalResults.join('\n'));
-      localStorage.setItem('gmail_generated_count', finalResults.length);
-      localStorage.setItem('gmail_main_email', emailInput);
-
-      showAlert(`Generate selesai! Total: ${finalResults.length} email.`);
+      batch();
     }
 
     function resetForm() {
-      document.getElementById('email').value = '';
-      document.getElementById('dotVariation').checked = true;
-      document.getElementById('aliasVariation').checked = true;
-      document.getElementById('googlemailVariation').checked = true;
-      document.getElementById('result').value = '';
-      document.getElementById('count').innerText = '0';
-
-      localStorage.removeItem('gmail_generated_results');
-      localStorage.removeItem('gmail_generated_count');
-      localStorage.removeItem('gmail_main_email');
-    }
-
-    function exportCSV() {
-      const text = document.getElementById('result').value;
-      if (!text) return showAlert('Belum ada email untuk diekspor.');
-      const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'gmail_variations.csv';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function exportTXT() {
-      const text = document.getElementById('result').value;
-      if (!text) return showAlert('Belum ada email untuk disimpan.');
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'gmail_variations.txt';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      ['email','result'].forEach(id => document.getElementById(id).value = '');
+      ['count','liveCount','elapsed'].forEach(id => document.getElementById(id).textContent = '0');
+      document.getElementById('progressBar').style.width = '0%';
+      ['dotVariation','aliasVariation','googlemailVariation'].forEach(id => document.getElementById(id).checked = true);
+      localStorage.clear();
     }
 
     function copyToClipboard() {
-      const text = document.getElementById('result').value;
-      if (!text) return showAlert('Tidak ada data untuk disalin.');
-      navigator.clipboard.writeText(text).then(() => showAlert('Disalin ke clipboard!'));
+      const val = document.getElementById('result').value;
+      if (!val) return showAlert('Tidak ada data untuk disalin.');
+      navigator.clipboard.writeText(val).then(() => showAlert('Disalin ke clipboard!'));
+    }
+
+    function exportCSV() {
+      const val = document.getElementById('result').value;
+      if (!val) return showAlert('Belum ada email untuk diekspor.');
+      const blob = new Blob([val], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'gmail_variations.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    function exportTXT() {
+      const val = document.getElementById('result').value;
+      if (!val) return showAlert('Belum ada email untuk disimpan.');
+      const blob = new Blob([val], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'gmail_variations.txt';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
   </script>
 </body>
