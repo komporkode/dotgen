@@ -35,9 +35,9 @@
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4">
 
-  <div class="absolute top-4 right-4">
+  <div class="fixed bottom-4 right-4 z-50">
     <button onclick="toggleDarkMode()" class="bg-yellow-400 dark:bg-yellow-600 text-black dark:text-white px-4 py-2 rounded-xl shadow hover:shadow-lg transition">
-      🌗 Toggle Mode
+      🌗 Mode
     </button>
   </div>
 
@@ -60,6 +60,9 @@
       </label>
       <label class="flex items-center">
         <input id="googlemailVariation" type="checkbox" class="mr-2" checked /> Gunakan domain googlemail
+      </label>
+      <label class="flex items-center">
+        <input id="limitOutput" type="checkbox" class="mr-2" /> Batasi output maksimal 1000 (rekomendasi untuk HP)
       </label>
     </div>
 
@@ -165,6 +168,16 @@
       }
     }
 
+    function applyLimitIfEnabled(emails) {
+      const limitEnabled = document.getElementById('limitOutput').checked;
+      if (limitEnabled && emails.size > 1000) {
+        const trimmed = Array.from(emails).slice(0, 1000);
+        showAlert('⚠️ Dibatasi 1000 kombinasi karena mode ringan aktif.');
+        return new Set(trimmed);
+      }
+      return emails;
+    }
+
     function generateEmails() {
       const email = document.getElementById('email').value.trim();
       const dot = document.getElementById('dotVariation').checked;
@@ -188,12 +201,13 @@
       result.value = '';
 
       const start = performance.now();
-      const emails = new Set();
+      let emails = new Set();
       emails.add(`${username}@gmail.com`);
       live.textContent = emails.size;
 
       const max = 1 << (username.length - 1);
       let i = 0, step = 1024;
+      const limitEnabled = document.getElementById('limitOutput').checked;
 
       function batch() {
         if (stopSignal) {
@@ -212,16 +226,19 @@
             if (j < username.length - 1 && (i & (1 << j))) combo += '.';
           }
           emails.add(`${combo}@gmail.com`);
+          if (limitEnabled && emails.size >= 1000) break;
         }
+
         live.textContent = emails.size;
         progress.style.width = `${(i / max) * 100}%`;
 
-        if (i < max) {
+        if (i < max && (!limitEnabled || emails.size < 1000)) {
           setTimeout(batch, 0);
         } else {
           if (alias) for (let a = 1; a <= 10; a++) emails.add(`${username}+d${a}@gmail.com`);
           if (googlemail) Array.from(emails).forEach(e => emails.add(e.replace('@gmail.com', '@googlemail.com')));
 
+          emails = applyLimitIfEnabled(emails);
           const final = Array.from(emails);
           result.value = final.join('\n');
           count.textContent = final.length;
@@ -230,7 +247,6 @@
           generateBtn.textContent = 'Generate';
           generating = false;
 
-          // Simpan ke localStorage
           localStorage.setItem('gmail_email', email);
           localStorage.setItem('gmail_options', JSON.stringify({ dot, alias, googlemail }));
           localStorage.setItem('gmail_result', final.join('\n'));
@@ -240,6 +256,7 @@
           showAlert(`Generate selesai! (${final.length} email)`);
         }
       }
+
       batch();
     }
 
