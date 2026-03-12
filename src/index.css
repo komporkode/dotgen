@@ -419,9 +419,10 @@ body::before {
     box-shadow: none; 
     border-bottom: none; 
     margin-bottom: 0.5rem; 
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
-    align-items: stretch;
   }
   .input-main .lucide {
     display: none;

@@ -10,12 +10,12 @@ function App() {
     googlemail: true,
     limitEnabled: false
   });
-  
+
   const [generating, setGenerating] = useState(false);
   const [results, setResults] = useState([]);
   const [progress, setProgress] = useState({ current: 0, target: 0, live: 0 });
   const [metrics, setMetrics] = useState({ count: 0, elapsed: 0 });
-  
+
   const stopFnRef = useRef(null);
 
   useEffect(() => {
@@ -48,20 +48,20 @@ function App() {
     setGenerating(true);
     setResults([]);
     setProgress({ current: 0, target: 0, live: 0 });
-    
+
     stopFnRef.current = generateVariations(
       { email, ...options },
       (prog) => setProgress({ current: prog.progressCurrent, target: prog.progressTarget, live: prog.liveCount }),
       (finishData) => {
         setGenerating(false);
         if (finishData.error) {
-           alert(finishData.error);
+          alert(finishData.error);
         } else if (finishData.stopped) {
-           // handled
+          // handled
         } else {
           setResults(finishData.results);
           setMetrics({ count: finishData.count, elapsed: finishData.elapsed });
-          
+
           localStorage.setItem('gmail_email', email);
           localStorage.setItem('gmail_options', JSON.stringify(options));
         }
@@ -113,7 +113,7 @@ function App() {
       {/* Hero Section */}
       <main className="hero">
         <h1>
-          Gmail Dot<br/>
+          Gmail Dot<br />
           <span>Generator</span>
         </h1>
         <p>
@@ -121,31 +121,31 @@ function App() {
         </p>
 
         <div className="input-group-container">
-          
+
           {/* Options Tabs */}
           <div className="service-tabs">
-            <div 
+            <div
               className={`service-tab ${options.dot ? 'active' : ''}`}
               onClick={() => handleOptionChange('dot')}
             >
               <CheckCircle size={18} className="icon-check" />
               Variasi Titik (.)
             </div>
-            <div 
+            <div
               className={`service-tab ${options.alias ? 'active' : ''}`}
               onClick={() => handleOptionChange('alias')}
             >
               <CheckCircle size={18} className="icon-check" />
               Variasi Alias (+)
             </div>
-            <div 
+            <div
               className={`service-tab ${options.googlemail ? 'active' : ''}`}
               onClick={() => handleOptionChange('googlemail')}
             >
               <CheckCircle size={18} className="icon-check" />
               Gunakan Googlemail
             </div>
-            <div 
+            <div
               className={`service-tab ${options.limitEnabled ? 'active' : ''}`}
               onClick={() => handleOptionChange('limitEnabled')}
             >
@@ -157,8 +157,8 @@ function App() {
           <div className="input-group">
             <div className="input-main">
               <Mail size={24} className="lucide" />
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email (contoh: nama@gmail.com)"
@@ -168,7 +168,7 @@ function App() {
                 <RefreshCw size={18} /> Clear
               </button>
             </div>
-            <button 
+            <button
               className="download-btn"
               onClick={handleToggleGenerate}
               disabled={generating && stopFnRef.current === null}
@@ -196,13 +196,13 @@ function App() {
                   <h3>Hasil Generate ({metrics.count} email)</h3>
                   <div style={{ fontSize: '0.9rem', color: '#6B7280', fontWeight: 600 }}>Dibutuhkan {metrics.elapsed}s</div>
                 </div>
-                
-                <textarea 
-                  className="textarea-result" 
-                  readOnly 
+
+                <textarea
+                  className="textarea-result"
+                  readOnly
                   value={results.join('\n')}
                 />
-                
+
                 <div className="download-options">
                   <button className="dl-link" onClick={copyToClipboard}>
                     <Copy size={16} /> Salin Semua
@@ -220,9 +220,9 @@ function App() {
 
           {/* Tool Cards Section */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-            <a 
-              href="https://dj.kastudio.my.id" 
-              target="_blank" 
+            <a
+              href="https://dj.kastudio.my.id"
+              target="_blank"
               rel="noreferrer"
               className="group p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2"
             >
@@ -237,9 +237,9 @@ function App() {
               </p>
             </a>
 
-            <a 
-              href="https://prompt.kastudio.my.id" 
-              target="_blank" 
+            <a
+              href="https://prompt.kastudio.my.id"
+              target="_blank"
               rel="noreferrer"
               className="group p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2"
             >
@@ -264,12 +264,12 @@ function App() {
           Made with ❤️ by Kang Adit &copy; 2025
         </p>
         <div id="visual_histats" className="flex justify-center flex-col items-center gap-2">
-           <div id="histats_counter"></div>
-           <noscript>
-             <a href="/" target="_blank">
-               <img src="//sstatic1.histats.com/0.gif?4943847&101" alt="Histats" border="0" />
-             </a>
-           </noscript>
+          <div id="histats_counter"></div>
+          <noscript>
+            <a href="/" target="_blank">
+              <img src="//sstatic1.histats.com/0.gif?4943847&101" alt="Histats" border="0" />
+            </a>
+          </noscript>
         </div>
       </footer>
     </>
