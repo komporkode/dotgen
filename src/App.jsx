@@ -218,6 +218,29 @@ function App() {
             </div>
           )}
 
+          {/* Share Section */}
+          <div className="mt-8 mb-4">
+            <h4 className="text-white font-bold mb-4 text-center">Bagikan ke Teman:</h4>
+            <div className="flex justify-center gap-4">
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Buat ribuan variasi email Gmail (titik & alias) secara instan! Hemat waktu bikin banyak akun. Coba gratis di: https://gmail.kastudio.my.id/')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-xl hover:bg-[#128C7E] transition-colors shadow-lg font-medium"
+              >
+                WhatsApp
+              </a>
+              <a
+                href={`https://t.me/share/url?url=${encodeURIComponent('https://gmail.kastudio.my.id/')}&text=${encodeURIComponent('Buat ribuan variasi email Gmail (titik & alias) secara instan! Hemat waktu bikin banyak akun. Coba gratis!')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-[#0088cc] text-white px-4 py-2 rounded-xl hover:bg-[#0077b5] transition-colors shadow-lg font-medium"
+              >
+                Telegram
+              </a>
+            </div>
+          </div>
+
           {/* Tool Cards Section */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
             <a
